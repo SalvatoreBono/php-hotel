@@ -37,9 +37,7 @@ $hotels = [
         'vote' => 2,
         'distance_to_center' => 50
     ],
-
 ];
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -57,7 +55,32 @@ $hotels = [
 
 <body>
     <div id="app">
-        <div class="container">
+        <div class="container pt-5">
+            <form method="GET" class="g-3 d-flex align-items-center pb-5 justify-content-center">
+
+                <div class="col-md-3 me-3">
+                    <select name="parking" id="inputState" class="form-select" aria-placeholder="">
+                        <option value="undefined" hidden selected> Vuoi il parcheggio nell'hotel...</option>
+                        <option value="undefined">Indifferente</option>
+                        <option value="1">Si</option>
+                        <option value="0">No</option>
+                    </select>
+                </div>
+                <div class="col-md-3 me-3">
+                    <select name="vote" id="inputState" class="form-select" aria-placeholder="">
+                        <option value="undefined" hidden selected> Quante stelle deve avere l'hotel...</option>
+                        <option value="undefined">Indifferente</option>
+                        <option value="1">⭐</option>
+                        <option value="2">⭐⭐</option>
+                        <option value="3">⭐⭐⭐</option>
+                        <option value="4">⭐⭐⭐⭐</option>
+                        <option value="5">⭐⭐⭐⭐⭐</option>
+                    </select>
+                </div>
+                <div>
+                    <button type="submit" class="btn btn-primary">Cerca</button>
+                </div>
+            </form>
             <table class="table">
                 <thead>
                     <tr>
@@ -70,16 +93,34 @@ $hotels = [
                 </thead>
                 <tbody>
                     <?php foreach ($hotels as $hotel) { //entro in php ed apro il foreach
+                        if (
+                            /* "!$_GET" se non esiste nessun get stampa */
+                            !$_GET
+                            /* $_GET["parking"] == "undefined" && $_GET["vote"] == "undefined"  se non seleziono il parcheggio e non selezione le stelle */
+                            || $_GET["parking"] == "undefined" && $_GET["vote"] == "undefined"
+
+                            /* $_GET["parking"] == $hotel["parking"] && $_GET["vote"] == "undefined"  se selezioni il parcheggio e non selezione le stelle */
+                            || $_GET["parking"] == $hotel["parking"] && $_GET["vote"] == "undefined"
+
+                            /* $_GET["parking"] == $hotel["parking"] && $hotel["vote"] >=  $_GET["vote"]  se selezioni il parcheggio e selezioni le stelle */
+                            || $_GET["parking"] == $hotel["parking"] && $hotel["vote"] >=  $_GET["vote"]
+
+                            /*$_GET["parking"] == "undefined" && $hotel["vote"] >=  $_GET["vote"] se non selezioni il parcheggio e selezioni le stelle */
+                            || $_GET["parking"] == "undefined" && $hotel["vote"] >=  $_GET["vote"]
+                        ) {
                     ?> <!-- chiudo php -->
-                        <!-- scrivo ciò che voglio ciclare -->
-                        <tr>
-                            <td><?php echo $hotel['name'] ?></td>
-                            <td><?php echo $hotel['description'] ?></td>
-                            <td><?php echo $hotel['parking'] ?></td>
-                            <td><?php echo $hotel['vote'] ?></td>
-                            <td><?php echo $hotel['distance_to_center'] ?></td>
-                        </tr>
+                            <tr>
+                                <td><?php echo $hotel['name'] ?></td>
+                                <td><?php echo $hotel['description'] ?></td>
+
+                                <!-- in true metti "Si" e in false metti "No" -->
+                                <td><?php echo $hotel['parking'] ? "Si" : "No" ?></td>
+
+                                <td><?php echo $hotel['vote'] ?></td>
+                                <td><?php echo $hotel['distance_to_center'] ?></td>
+                            </tr>
                     <?php /* entro in php */
+                        }
                     } /* chiudo il foreach */
                     ?> <!-- esco da php -->
                 </tbody>
